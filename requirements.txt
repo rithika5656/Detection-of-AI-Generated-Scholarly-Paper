@@ -1,0 +1,16 @@
+# Requirements for AI-Generated Scholarly Paper Detection System
+pdfminer.six
+scikit-learn
+pandas
+numpy
+nltk
+spacy
+transformers
+sentence-transformers
+python-docx
+PyPDF2
+requests
+fastapi
+uvicorn[standard]
+python-multipart
+pymupdf
