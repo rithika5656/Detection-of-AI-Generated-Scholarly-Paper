@@ -13,23 +13,15 @@ from analysis.plagiarism import check_plagiarism
 from scoring.score import aggregate_scores
 from report.generate import generate_report
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+WEB_DIR = os.path.join(BASE_DIR, 'web')
+app = Flask(__name__, static_folder=WEB_DIR, static_url_path='/static', template_folder=WEB_DIR)
 UPLOAD_DIR = os.path.join('data', 'uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-INDEX_HTML = '''
-<!doctype html>
-<title>Scholarly Paper Detector</title>
-<h1>Upload a paper (txt or pdf)</h1>
-<form method=post enctype=multipart/form-data action="/analyze">
-  <input type=file name=file>
-  <input type=submit value=Analyze>
-</form>
-'''
-
 @app.route('/')
 def index():
-    return render_template_string(INDEX_HTML)
+        return app.send_static_file('index.html')
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
