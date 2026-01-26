@@ -59,6 +59,19 @@ def extract_text(path):
                 else:
                     text = f"Error extracting text from image: {e}"
                     
+        elif ext in ['.xlsx', '.xls', '.csv']:
+            import pandas as pd
+            try:
+                if ext == '.csv':
+                    df = pd.read_csv(path)
+                else:
+                    df = pd.read_excel(path)
+                
+                # Convert all cells to string and join them
+                text = "\n".join(df.astype(str).apply(lambda x: ' '.join(x), axis=1))
+            except Exception as e:
+                text = f"Error extracting text from spreadsheet: {e}"
+
         else:
             # Assume text file
             with open(path, 'r', encoding='utf-8') as f:
