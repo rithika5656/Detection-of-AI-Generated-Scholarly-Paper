@@ -58,10 +58,15 @@ async def analyze(file: UploadFile = File(...)):
 
     text, metadata = extract_text(str(save_path))
     sections = preprocess(text)
-    ai_score = detect_ai(sections.get('body',''))
+    ai_result = detect_ai(sections.get('body',''))
+    # Handle dict or float for backward compatibility (though we know it is dict now)
+    ai_score_val = ai_result['score'] if isinstance(ai_result, dict) else ai_result
+    
     plagiarism_score, matches = check_plagiarism(sections.get('body',''), str(ROOT / 'data'))
-    final = aggregate_scores(ai_score, plagiarism_score)
-    report = generate_report(str(save_path), metadata, sections, ai_score, plagiarism_score, final, matches)
+    final = aggregate_scores(ai_score_val, plagiarism_score)
+    
+    # Pass the full ai_result structure to the report
+    report = generate_report(str(save_path), metadata, sections, ai_result, plagiarism_score, final, matches)
 
     return report
 

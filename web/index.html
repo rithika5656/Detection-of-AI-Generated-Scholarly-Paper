@@ -36,10 +36,17 @@
               <button id="clearBtn" class="btn" type="button">Clear</button>
             </div>
           </form>
-          <div id="result" class="result"></div>
+          
+          <div id="result" class="result" style="display:none"></div>
+        </div>
+
+        <div class="recent-scans-container" id="historyContainer" style="display:none">
+          <div class="section-title">Recent Scans</div>
+          <div class="recent-scans" id="recentScans"></div>
         </div>
       </div>
     </div>
+    <div class="toast-container" id="toastContainer"></div>
     <footer class="footer">Built for academic integrity — prototype only.</footer>
     <script src="/static/app.js"></script>
   </body>

@@ -4,95 +4,220 @@ const result = document.getElementById('result');
 const dropZone = document.getElementById('dropZone');
 const analyzeBtn = document.getElementById('analyzeBtn');
 const clearBtn = document.getElementById('clearBtn');
-function humanPct(v){ return Math.round(v*100); }
+const recentScansContainer = document.getElementById('recentScans');
+const historyContainer = document.getElementById('historyContainer');
 
-function showResult(data){
+// Utility to format percentage
+function fmtPct(val) {
+  return Math.round((val || 0) * 100) + '%';
+}
+
+function getDecisionColor(decision) {
+  const d = decision.toLowerCase();
+  if (d.includes('accept')) return '#6ee7b7'; // green
+  if (d.includes('reject')) return '#fca5a5'; // red
+  return '#fbbf24'; // yellow
+}
+
+// Render the detailed result view
+function showResult(data) {
+  result.style.display = 'block';
   result.innerHTML = '';
+
   const scores = data.scores || {};
-  const box = document.createElement('div');
-  box.className = 'scores';
+  const metrics = data.scores?.ai_score?.metrics || {}; // Depending on how we structure it in API response
+  // Since api.py passes 'ai_result' (dict) to report, it should be under scores.ai_score if generate_report puts it there.
+  // Wait, generate_report structure: scores: { ai_score: <dict>, ... }
+  
+  const aiScoreVal = typeof scores.ai_score === 'object' ? scores.ai_score.score : scores.ai_score;
+  const aiMetrics = typeof scores.ai_score === 'object' ? scores.ai_score.metrics : { perplexity: '-', burstiness: '-' };
+  
+  const finalProb = (scores.final || {}).final_probability || 0;
+  const decision = (scores.final || {}).decision || 'Unknown';
+  
+  // 1. Decision Banner
+  const decisionColor = getDecisionColor(decision);
+  const decisionBox = document.createElement('div');
+  decisionBox.className = 'decision-box';
+  decisionBox.style.borderLeftColor = decisionColor;
+  decisionBox.innerHTML = `
+    <div><span class="decision-label">Recommendation:</span><span class="decision-value" style="color:${decisionColor}">${decision}</span></div>
+    <div style="font-size:12px;opacity:0.7">Combined Score: ${fmtPct(finalProb)}</div>
+  `;
+  result.appendChild(decisionBox);
 
-  const ai = document.createElement('div'); ai.className='score-badge';
-  ai.innerHTML = `<h3>${humanPct(scores.ai_score || 0)}%</h3><div class="muted">AI likelihood</div>`;
-  box.appendChild(ai);
+  // 2. Score Cards
+  const grid = document.createElement('div');
+  grid.className = 'scores';
+  
+  // AI Score
+  grid.innerHTML += `
+    <div class="score-badge">
+      <h3>${fmtPct(aiScoreVal)}</h3>
+      <div class="label">AI Probability</div>
+    </div>
+    <div class="score-badge">
+      <h3>${fmtPct(scores.plagiarism_score)}</h3>
+      <div class="label">Plagiarism</div>
+    </div>
+  `;
+  result.appendChild(grid);
 
-  const pl = document.createElement('div'); pl.className='score-badge';
-  pl.innerHTML = `<h3>${humanPct(scores.plagiarism_score || 0)}%</h3><div class="muted">Plagiarism</div>`;
-  box.appendChild(pl);
+  // 3. Advanced Metrics Grid
+  const metricsGrid = document.createElement('div');
+  metricsGrid.className = 'metrics-grid';
+  metricsGrid.innerHTML = `
+    <div class="metric-item">
+      <div class="metric-name">Perplexity</div>
+      <div class="metric-val">${aiMetrics.perplexity || 'N/A'}</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-name">Burstiness</div>
+      <div class="metric-val">${aiMetrics.burstiness || 'N/A'}</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-name">Avg Sentence Len</div>
+      <div class="metric-val">${aiMetrics.avg_sentence_len || 'N/A'}</div>
+    </div>
+     <div class="metric-item">
+      <div class="metric-name">Filename</div>
+      <div class="metric-val" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${data.file ? data.file.split(/[\\/]/).pop() : 'Unknown'}</div>
+    </div>
+  `;
+  result.appendChild(metricsGrid);
 
-  const fin = document.createElement('div'); fin.className='score-badge';
-  fin.innerHTML = `<h3>${humanPct((scores.final||{}).final_probability || 0)}%</h3><div class="muted">Combined</div>`;
-  box.appendChild(fin);
-
-  result.appendChild(box);
-  const decision = document.createElement('div'); decision.className='decision';
-  decision.textContent = `Decision: ${(scores.final||{}).decision || data.scores?.final?.decision || 'N/A'}`;
-  result.appendChild(decision);
-  if (data.matches && data.matches.length){
-    const mcont = document.createElement('div'); mcont.className='matches';
-    const mh = document.createElement('h4'); mh.textContent = 'Suspicious matches'; mcont.appendChild(mh);
+  // 4. Suspicious Matches (if any)
+  if (data.matches && data.matches.length > 0) {
+    const mDiv = document.createElement('div');
+    mDiv.className = 'matches';
+    mDiv.innerHTML = '<h4>Flagged Segments</h4>';
     data.matches.forEach(m => {
-      const it = document.createElement('div'); it.className='match-item'; it.textContent = m;
-      mcont.appendChild(it);
+      const row = document.createElement('div');
+      row.className = 'match-item';
+      row.innerText = m;
+      mDiv.appendChild(row);
     });
-    result.appendChild(mcont);
-  }
-  // metadata and excerpt
-  if (data.sections){
-    const meta = document.createElement('div'); meta.style.marginTop='12px';
-  const title = data.metadata?.title || '';
-  meta.innerHTML = `<div style="opacity:0.8;margin-bottom:6px">File: ${title}</div>`;
-  if (data.sections.abstract) meta.innerHTML += `<div style="font-style:italic;background:rgba(255,255,255,0.02);padding:8px;border-radius:6px">${data.sections.abstract}</div>`;
-    result.appendChild(meta);
+    result.appendChild(mDiv);
   }
 }
-async function analyzeFile(){
+
+// --- History Logic ---
+function saveToHistory(data) {
+  const history = JSON.parse(localStorage.getItem('scanHistory') || '[]');
+  const summary = {
+    id: Date.now(),
+    date: new Date().toLocaleString(),
+    filename: data.file ? data.file.split(/[\\/]/).pop() : 'doc.txt',
+    finalScore: (data.scores?.final?.final_probability || 0),
+    data: data // store full data for reload
+  };
+  history.unshift(summary);
+  if (history.length > 10) history.pop(); // keep last 10
+  localStorage.setItem('scanHistory', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('scanHistory') || '[]');
+  if (history.length === 0) {
+    historyContainer.style.display = 'none';
+    return;
+  }
+  historyContainer.style.display = 'block';
+  recentScansContainer.innerHTML = '';
+  
+  history.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'recent-item';
+    el.innerHTML = `
+      <div class="recent-header">
+        <span class="recent-file" title="${item.filename}">${item.filename}</span>
+        <span class="recent-score">${fmtPct(item.finalScore)} AI/Plag</span>
+      </div>
+      <div class="recent-date">${item.date}</div>
+    `;
+    el.onclick = () => {
+      showResult(item.data);
+      result.scrollIntoView({behavior:'smooth'});
+    };
+    recentScansContainer.appendChild(el);
+  });
+}
+
+// --- Main Analysis Logic ---
+async function analyzeFile() {
   const f = fileInput.files[0];
   if (!f) return;
+
   analyzeBtn.disabled = true;
-  result.innerHTML = 'Analyzing...';
-  const fd = new FormData(); fd.append('file', f);
-  try{
-    const resp = await fetch('/analyze', { method: 'POST', body: fd });
-    if (!resp.ok){
-      const err = await resp.json(); result.textContent = 'Error: '+(err.detail||JSON.stringify(err));
-      return;
-    }
-    const data = await resp.json();
-    showResult(data);
-  }catch(e){ result.textContent = 'Request failed: '+e }
-  finally{ analyzeBtn.disabled = false }
-}
+  analyzeBtn.innerText = 'Processing...';
+  result.style.display = 'block';
+  result.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.6)">Running deep analysis...</div>';
 
-form.addEventListener('submit', (e)=>{ e.preventDefault(); analyzeFile(); });
-clearBtn.addEventListener('click', ()=>{ fileInput.value=''; result.innerHTML=''; });
-// drag and drop
-['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, (e)=>{e.preventDefault(); dropZone.classList.add('dragover')}));
-['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, (e)=>{e.preventDefault(); dropZone.classList.remove('dragover')}));
-dropZone.addEventListener('drop', (e)=>{
-  const f = e.dataTransfer.files[0]; if(!f) return; fileInput.files = e.dataTransfer.files; analyzeFile();
-});
-const form = document.getElementById('uploadForm');
-const fileInput = document.getElementById('fileInput');
-const result = document.getElementById('result');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const f = fileInput.files[0];
-  if (!f) return;
   const fd = new FormData();
   fd.append('file', f);
-  result.textContent = 'Analyzing...';
+
   try {
-    const resp = await fetch('/analyze', { method: 'POST', body: fd });
+    const resp = await fetch('/analyze', {
+      method: 'POST',
+      body: fd
+    });
+
     if (!resp.ok) {
       const err = await resp.json();
-      result.textContent = 'Error: ' + (err.detail || JSON.stringify(err));
+      result.innerHTML = `<div style="color:#fca5a5">Error: ${err.detail || 'Unknown error'}</div>`;
       return;
     }
+
     const data = await resp.json();
-    result.textContent = JSON.stringify(data.scores, null, 2) + '\n\nSummary:\n' + data.summary || JSON.stringify(data, null, 2);
-  } catch (err) {
-    result.textContent = 'Request failed: ' + err;
+    showResult(data);
+    saveToHistory(data);
+    
+  } catch (e) {
+    result.innerHTML = `<div style="color:#fca5a5">Network Error: ${e.message}</div>`;
+  } finally {
+    analyzeBtn.disabled = false;
+    analyzeBtn.innerText = 'Analyze';
+  }
+}
+
+// --- Event Listeners ---
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  analyzeFile();
+});
+
+clearBtn.addEventListener('click', () => {
+  fileInput.value = '';
+  result.style.display = 'none';
+  result.innerHTML = '';
+});
+
+// Drag & Drop
+['dragenter', 'dragover'].forEach(ev => dropZone.addEventListener(ev, (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+}));
+['dragleave', 'drop'].forEach(ev => dropZone.addEventListener(ev, (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+}));
+dropZone.addEventListener('drop', (e) => {
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    fileInput.files = e.dataTransfer.files;
+    analyzeFile();
   }
 });
+
+fileInput.addEventListener('change', () => {
+   // Optional: Auto submit or just show selected file name?
+   // For now just let user click analyze
+   if(fileInput.files[0]) {
+      const name = fileInput.files[0].name;
+      document.querySelector('.drop-title').innerText = name;
+   }
+});
+
+// Init
+renderHistory();
