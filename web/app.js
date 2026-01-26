@@ -60,6 +60,10 @@ function showResult(data) {
       <h3>${fmtPct(scores.plagiarism_score)}</h3>
       <div class="label">Plagiarism</div>
     </div>
+    <div class="score-badge">
+       <h3>${(scores.citation_score || {}).score || 0}/1</h3>
+       <div class="label">Citation Credibility</div>
+    </div>
   `;
   result.appendChild(grid);
 
@@ -76,8 +80,8 @@ function showResult(data) {
       <div class="metric-val">${aiMetrics.burstiness || 'N/A'}</div>
     </div>
     <div class="metric-item">
-      <div class="metric-name">Avg Sentence Len</div>
-      <div class="metric-val">${aiMetrics.avg_sentence_len || 'N/A'}</div>
+      <div class="metric-name">Citation Count</div>
+      <div class="metric-val">${(scores.citation_score || {}).count || 0}</div>
     </div>
      <div class="metric-item">
       <div class="metric-name">Filename</div>
@@ -98,6 +102,35 @@ function showResult(data) {
       mDiv.appendChild(row);
     });
     result.appendChild(mDiv);
+  }
+
+  // 5. Feedback Loop
+  const feedbackDiv = document.createElement('div');
+  feedbackDiv.className = 'feedback-section';
+  feedbackDiv.style.textAlign = 'center';
+  feedbackDiv.style.marginTop = '24px';
+  feedbackDiv.innerHTML = `
+    <p style="color:#94a3b8;font-size:13px;margin-bottom:10px;">Is this result accurate?</p>
+    <button class="btn" style="border:1px solid #10b981;color:#10b981;margin-right:8px;" onclick="sendFeedback(true, '${data.file}')">Yes, Accurate</button>
+    <button class="btn" style="border:1px solid #ef4444;color:#ef4444;" onclick="sendFeedback(false, '${data.file}')">No, Inaccurate</button>
+  `;
+  result.appendChild(feedbackDiv);
+}
+
+// --- Feedback Logic ---
+async function sendFeedback(isAccurate, filepath) {
+  try {
+    const filename = filepath ? filepath.split(/[\\/]/).pop() : 'unknown';
+    const resp = await fetch('/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename, is_accurate: isAccurate })
+    });
+    const res = await resp.json();
+    alert(res.message);
+  } catch (e) {
+    console.error(e);
+    alert('Failed to send feedback.');
   }
 }
 
