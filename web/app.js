@@ -50,11 +50,17 @@ function showResult(data) {
   const grid = document.createElement('div');
   grid.className = 'scores';
 
-  // AI Score
+  const humanScoreVal = 1.0 - aiScoreVal;
+
+  // AI & Human Score
   grid.innerHTML += `
     <div class="score-badge">
-      <h3>${fmtPct(aiScoreVal)}</h3>
-      <div class="label">AI Probability</div>
+      <h3 style="color:#f87171">${fmtPct(aiScoreVal)}</h3>
+      <div class="label">AI Generated</div>
+    </div>
+    <div class="score-badge">
+      <h3 style="color:#4ade80">${fmtPct(humanScoreVal)}</h3>
+      <div class="label">Human Written</div>
     </div>
     <div class="score-badge">
       <h3>${fmtPct(scores.plagiarism_score)}</h3>
