@@ -11,6 +11,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from extraction.extract import extract_text
 from preprocessing.clean import preprocess
+from analysis.ai_detector import detect_ai
+from analysis.plagiarism import check_plagiarism
 from analysis.citation import check_citations
 from analysis.eligibility import check_eligibility  # New Import
 from scoring.score import aggregate_scores
