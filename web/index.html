@@ -1,53 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Scholarly Paper Detector</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
-  </head>
-  <body>
-    <div class="hero">
-      <div class="hero-inner">
-        <div class="brand">
-          <div class="logo">SP</div>
-          <div class="title-area">
-            <h1>Scholarly Paper Detector</h1>
-            <p class="tag">AI & plagiarism detection for academic writing</p>
-          </div>
-        </div>
-        <div class="uploader-card">
-          <form id="uploadForm" class="upload-form">
-            <label class="file-drop" id="dropZone">
-              <input type="file" id="fileInput" name="file" accept=".txt,.pdf" />
-              <div class="drop-content">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v10" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 7l4-4 4 4" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="13" width="18" height="7" rx="2" stroke="#CBD5E1" stroke-width="1.2"/></svg>
-                <div>
-                  <div class="drop-title">Drag & drop a file, or click to browse</div>
-                  <div class="drop-sub">Supported: .txt, .pdf • Max 10MB</div>
-                </div>
-              </div>
-            </label>
-            <div class="actions">
-              <button id="analyzeBtn" class="btn primary" type="submit">Analyze</button>
-              <button id="clearBtn" class="btn" type="button">Clear</button>
-            </div>
-          </form>
-          
-          <div id="result" class="result" style="display:none"></div>
-        </div>
 
-        <div class="recent-scans-container" id="historyContainer" style="display:none">
-          <div class="section-title">Recent Scans</div>
-          <div class="recent-scans" id="recentScans"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scholarly Paper Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="brand">
+        <div class="logo">SP</div>
+        <div class="title-area">
+          <h1>Scholarly Paper Detector</h1>
+          <p class="tag">AI & plagiarism detection for academic writing</p>
         </div>
       </div>
+      <div class="uploader-card">
+        <form id="uploadForm" class="upload-form">
+          <label class="file-drop" id="dropZone">
+            <input type="file" id="fileInput" name="file" accept=".txt,.pdf,.png,.jpg,.jpeg" />
+            <div class="drop-content">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3v10" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M8 7l4-4 4 4" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <rect x="3" y="13" width="18" height="7" rx="2" stroke="#CBD5E1" stroke-width="1.2" />
+              </svg>
+              <div>
+                <div class="drop-title">Drag & drop a file, or click to browse</div>
+                <div class="drop-sub">Supported: .pdf, .txt, Images (png, jpg)</div>
+              </div>
+            </div>
+          </label>
+          <div class="actions">
+            <button id="analyzeBtn" class="btn primary" type="submit">Analyze</button>
+            <button id="clearBtn" class="btn" type="button">Clear</button>
+          </div>
+        </form>
+
+        <div id="result" class="result" style="display:none"></div>
+      </div>
+
+      <div class="recent-scans-container" id="historyContainer" style="display:none">
+        <div class="section-title">Recent Scans</div>
+        <div class="recent-scans" id="recentScans"></div>
+      </div>
     </div>
-    <div class="toast-container" id="toastContainer"></div>
-    <footer class="footer">Built for academic integrity — prototype only.</footer>
-    <script src="/static/app.js"></script>
-  </body>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+  <footer class="footer">Built for academic integrity — prototype only.</footer>
+  <script src="/static/app.js"></script>
+</body>
+
 </html>

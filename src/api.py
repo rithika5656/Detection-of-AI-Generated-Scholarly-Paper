@@ -57,6 +57,11 @@ async def analyze(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
 
     text, metadata = extract_text(str(save_path))
+    
+    if text.startswith("Error"):
+        # Return a 422 Unprocessable Entity with the specific error message (e.g., Tesseract missing)
+        raise HTTPException(status_code=422, detail=text)
+        
     sections = preprocess(text)
     ai_result = detect_ai(sections.get('body',''))
     # Handle dict or float for backward compatibility (though we know it is dict now)
