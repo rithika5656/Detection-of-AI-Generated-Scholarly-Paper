@@ -71,30 +71,35 @@ async def analyze(file: UploadFile = File(...)):
         # Return a 422 Unprocessable Entity with the specific error message (e.g., Tesseract missing)
         raise HTTPException(status_code=422, detail=text)
         
-    sections = preprocess(text)
-    ai_result = detect_ai(sections.get('body',''))
-    # Handle dict or float for backward compatibility (though we know it is dict now)
-    ai_score_val = ai_result['score'] if isinstance(ai_result, dict) else ai_result
-    
-    plagiarism_score, matches = check_plagiarism(sections.get('body',''), str(ROOT / 'data'))
-    
-    citation_result = check_citations(sections.get('body', ''))
-    
-    # NEW: Check Eligibility
-    eligibility_result = check_eligibility(
-        ai_score_val,
-        plagiarism_score,
-        citation_result,
-        sections.get('body','')
-    )
-    
-    final = aggregate_scores(ai_score_val, plagiarism_score)
-    
-    # Add eligibility to the report structure
-    report = generate_report(str(save_path), metadata, sections, ai_result, plagiarism_score, citation_result, final, matches)
-    report['eligibility'] = eligibility_result # Append explicitly since generate_report might not expect it
-    
-    return report
+    try:
+        sections = preprocess(text)
+        ai_result = detect_ai(sections.get('body',''))
+        # Handle dict or float for backward compatibility (though we know it is dict now)
+        ai_score_val = ai_result['score'] if isinstance(ai_result, dict) else ai_result
+        
+        plagiarism_score, matches = check_plagiarism(sections.get('body',''), str(ROOT / 'data'))
+        
+        citation_result = check_citations(sections.get('body', ''))
+        
+        # NEW: Check Eligibility
+        eligibility_result = check_eligibility(
+            ai_score_val,
+            plagiarism_score,
+            citation_result,
+            sections.get('body','')
+        )
+        
+        final = aggregate_scores(ai_score_val, plagiarism_score)
+        
+        # Add eligibility to the report structure
+        report = generate_report(str(save_path), metadata, sections, ai_result, plagiarism_score, citation_result, final, matches)
+        report['eligibility'] = eligibility_result # Append explicitly since generate_report might not expect it
+        
+        return report
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=f"Analysis failed: {str(e)}")
 
 @app.post('/feedback')
 def submit_feedback(feedback: FeedbackRequest):
