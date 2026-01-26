@@ -1,24 +1,28 @@
 {
-  "file": "data\\uploads\\sample_paper.txt",
+  "file": "C:\\Users\\rithi\\OneDrive\\Desktop\\Scholarly paper\\data\\uploads\\AI_Scholarly_Paper_Detection_Dataset.pdf",
   "metadata": {
-    "title": "sample_paper.txt"
+    "title": "AI_Scholarly_Paper_Detection_Dataset.pdf"
   },
   "sections": {
-    "abstract": "This paper presents a sample study to demonstrate the AI-Generated Scholarly Paper Detection System. The goal is to show a simple pipeline for text extraction, preprocessing, analysis, and reporting.",
-    "body": "Title: Sample Study on Machine Learning Abstract This paper presents a sample study to demonstrate the AI-Generated Scholarly Paper Detection System. The goal is to show a simple pipeline for text extraction, preprocessing, analysis, and reporting. Introduction Machine learning has seen rapid growth. The methodology follows standard experimental designs. Methods We collected data and ran standard analyses. The experimental setup is intentionally simple for demonstration purposes. Results The results show patterns in the data consistent with expectations. Further work is needed.",
-    "references": "Doe, J. (2020). Example Reference."
+    "abstract": "Network intrusion detection systems play a crucial role in ensuring the security of modern computer networks. This study evaluates traditional machine learning algorithms including Support Vector Machines, Random Forests, and k-Nearest Neighbors for detecting anomalous network traffic. Experimental results using the NSL-KDD dataset demonstrate that ensemble",
+    "body": "AI-Generated Scholarly Paper Detection \u2013 Sample Dataset This PDF contains labeled sample scholarly texts for training and evaluating AI-generated academic paper detection systems. The samples are categorized as Human-Written, AI-Generated, and Mixed Content. Section A: Human-Written Scholarly Samples Label: Human-Written (AI_Generated = 0) Title: A Study on Machine Learning Approaches for Network Intrusion Detection Abstract: Network intrusion detection systems play a crucial role in ensuring the security of modern computer networks. This study evaluates traditional machine learning algorithms including Support Vector Machines, Random Forests, and k-Nearest Neighbors for detecting anomalous network traffic. Experimental results using the NSL-KDD dataset demonstrate that ensemble methods outperform individual classifiers in terms of accuracy and false positive rate. Conclusion: The findings suggest that feature selection and balanced datasets significantly influence model performance, highlighting the need for adaptive intrusion detection frameworks. Section B: AI-Generated Scholarly Samples Label: AI-Generated (AI_Generated = 1) Title: An Advanced Artificial Intelligence Framework for Intelligent Network Security Abstract: In recent years, artificial intelligence has revolutionized the paradigm of intelligent network security by enabling highly efficient and scalable analytical models. This paper proposes an innovative deep learning framework that leverages multilayer neural architectures to identify complex intrusion patterns with superior accuracy. The proposed methodology demonstrates remarkable performance across diverse simulated environments. Conclusion: The experimental outcomes conclusively validate the effectiveness of the proposed framework, establishing it as a robust and universally applicable solution for future network defense systems. Section C: Mixed / Partially AI-Generated Samples Label: Mixed Content (Partial_AI = 1) Title: Deep Learning Models for Healthcare Data Analysis Abstract: This paper explores the application of deep learning models in healthcare analytics, focusing on patient outcome prediction using electronic health records. Convolutional and recurrent neural networks are evaluated using real-world clinical datasets. Conclusion (AI-Generated): Overall, the results strongly indicate that the proposed deep learning paradigm represents a transformative and highly promising direction for intelligent healthcare systems, offering unprecedented opportunities for innovation and optimization.",
+    "references": ""
   },
   "scores": {
-    "ai_score": 0.067,
-    "plagiarism_score": 0.25,
+    "ai_score": {
+      "score": 0.249,
+      "metrics": {
+        "perplexity": 85,
+        "burstiness": 69,
+        "avg_sentence_len": 24.5
+      }
+    },
+    "plagiarism_score": 0.0,
     "final": {
-      "final_probability": 0.14,
+      "final_probability": 0.149,
       "decision": "Accept"
     }
   },
-  "matches": [
-    "The goal is to show a simple pipeline for text extraction, preprocessing, analysis, and reporting",
-    "The experimental setup is intentionally simple for demonstration purposes"
-  ],
-  "summary": "AI score 0.067, Plagiarism 0.25, Decision: Accept"
+  "matches": [],
+  "summary": "AI score {'score': 0.249, 'metrics': {'perplexity': 85, 'burstiness': 69, 'avg_sentence_len': 24.5}}, Plagiarism 0.0, Decision: Accept"
 }
