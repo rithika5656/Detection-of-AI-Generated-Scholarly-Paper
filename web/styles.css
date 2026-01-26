@@ -31,7 +31,7 @@ body {
 
 /* Bubbles Background */
 .bubbles {
-  options: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -39,7 +39,6 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  position: fixed;
 }
 
 .bubble {
@@ -47,11 +46,24 @@ body {
   bottom: -100px;
   width: 40px;
   height: 40px;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05) 60%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.4), rgba(59, 130, 246, 0.05) 60%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 50%;
   animation: floatUp 15s infinite linear;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.bubble:nth-child(even) {
+  background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.05) 60%);
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+
+.bubble:nth-child(3n) {
+  background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.05) 60%);
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
 }
 
 .bubble:nth-child(1) {
@@ -100,6 +112,78 @@ body {
   height: 55px;
   animation-duration: 20s;
   animation-delay: 7s;
+}
+
+.bubble:nth-child(7) {
+  left: 15%;
+  width: 35px;
+  height: 35px;
+  animation-duration: 24s;
+  animation-delay: 6s;
+}
+
+.bubble:nth-child(8) {
+  left: 90%;
+  width: 45px;
+  height: 45px;
+  animation-duration: 17s;
+  animation-delay: 1s;
+}
+
+.bubble:nth-child(9) {
+  left: 5%;
+  width: 25px;
+  height: 25px;
+  animation-duration: 29s;
+  animation-delay: 4s;
+}
+
+.bubble:nth-child(10) {
+  left: 45%;
+  width: 65px;
+  height: 65px;
+  animation-duration: 21s;
+  animation-delay: 2.5s;
+}
+
+.bubble:nth-child(11) {
+  left: 75%;
+  width: 30px;
+  height: 30px;
+  animation-duration: 26s;
+  animation-delay: 0.5s;
+}
+
+.bubble:nth-child(12) {
+  left: 55%;
+  width: 50px;
+  height: 50px;
+  animation-duration: 19s;
+  animation-delay: 6.5s;
+}
+
+.bubble:nth-child(13) {
+  left: 25%;
+  width: 40px;
+  height: 40px;
+  animation-duration: 23s;
+  animation-delay: 1.5s;
+}
+
+.bubble:nth-child(14) {
+  left: 85%;
+  width: 20px;
+  height: 20px;
+  animation-duration: 27s;
+  animation-delay: 4.5s;
+}
+
+.bubble:nth-child(15) {
+  left: 95%;
+  width: 35px;
+  height: 35px;
+  animation-duration: 16s;
+  animation-delay: 3.5s;
 }
 
 @keyframes floatUp {
