@@ -18,11 +18,16 @@
       }
     },
     "plagiarism_score": 0.0,
+    "citation_score": {
+      "score": 0.2,
+      "count": 0,
+      "details": "Found 0 citations (Numeric: 0, Auth-Date: 0)"
+    },
     "final": {
       "final_probability": 0.203,
       "decision": "Accept"
     }
   },
   "matches": [],
-  "summary": "AI score {'score': 0.339, 'metrics': {'perplexity': 76, 'burstiness': 39, 'avg_sentence_len': 16.9}}, Plagiarism 0.0, Decision: Accept"
+  "summary": "AI score {'score': 0.339, 'metrics': {'perplexity': 76, 'burstiness': 39, 'avg_sentence_len': 16.9}}, Plagiarism 0.0, Citations 0.2, Decision: Accept"
 }
