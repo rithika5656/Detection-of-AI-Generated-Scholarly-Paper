@@ -11,9 +11,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from extraction.extract import extract_text
 from preprocessing.clean import preprocess
-from analysis.ai_detector import detect_ai
-from analysis.plagiarism import check_plagiarism
 from analysis.citation import check_citations
+from analysis.eligibility import check_eligibility  # New Import
 from scoring.score import aggregate_scores
 from report.generate import generate_report
 from learning.retrain import retrain
@@ -79,11 +78,20 @@ async def analyze(file: UploadFile = File(...)):
     
     citation_result = check_citations(sections.get('body', ''))
     
+    # NEW: Check Eligibility
+    eligibility_result = check_eligibility(
+        ai_score_val,
+        plagiarism_score,
+        citation_result,
+        sections.get('body','')
+    )
+    
     final = aggregate_scores(ai_score_val, plagiarism_score)
     
-    # Pass the full ai_result structure to the report
+    # Add eligibility to the report structure
     report = generate_report(str(save_path), metadata, sections, ai_result, plagiarism_score, citation_result, final, matches)
-
+    report['eligibility'] = eligibility_result # Append explicitly since generate_report might not expect it
+    
     return report
 
 @app.post('/feedback')

@@ -46,7 +46,7 @@ function showResult(data) {
   `;
   result.appendChild(decisionBox);
 
-  // 2. Score Cards
+  // 2. Score Cards (Grid)
   const grid = document.createElement('div');
   grid.className = 'scores';
 
@@ -63,15 +63,50 @@ function showResult(data) {
       <div class="label">Human Written</div>
     </div>
     <div class="score-badge">
-      <h3>${fmtPct(scores.plagiarism_score)}</h3>
-      <div class="label">Plagiarism</div>
-    </div>
-    <div class="score-badge">
        <h3>${(scores.citation_score || {}).score || 0}/1</h3>
        <div class="label">Citation Credibility</div>
     </div>
   `;
   result.appendChild(grid);
+
+  // --- NEW: Scholarship Eligibility Card ---
+  if (data.eligibility) {
+    const elig = data.eligibility;
+    const eBox = document.createElement('div');
+    eBox.className = 'decision-box';
+    // Style it distinctly
+    eBox.style.marginTop = '20px';
+    eBox.style.flexDirection = 'column';
+    eBox.style.alignItems = 'flex-start';
+    eBox.style.background = 'rgba(6, 182, 212, 0.1)';
+    eBox.style.border = '1px solid rgba(6, 182, 212, 0.3)';
+
+    const statusColor = elig.is_eligible ? '#4ade80' : '#f87171';
+    const statusText = elig.is_eligible ? 'ELIGIBLE' : 'NOT ELIGIBLE';
+
+    let reasonsHtml = '';
+    if (elig.reasons && elig.reasons.length > 0) {
+      reasonsHtml = '<ul style="margin:10px 0 0 20px;font-size:13px;color:#cbd5e1;">' +
+        elig.reasons.map(r => `<li>${r}</li>`).join('') +
+        '</ul>';
+    } else {
+      reasonsHtml = '<div style="margin-top:10px;font-size:13px;color:#cbd5e1;">Meets all core criteria for scholarship consideration.</div>';
+    }
+
+    eBox.innerHTML = `
+        <div style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;text-transform:uppercase;color:#06b6d4;letter-spacing:1px;">Scholarship Status</span>
+            <span style="font-size:16px;font-weight:700;color:${statusColor}">${statusText}</span>
+        </div>
+        <div style="width:100%;height:1px;background:rgba(6,182,212,0.2);"></div>
+        ${reasonsHtml}
+        <div style="margin-top:12px;font-size:12px;color:#94a3b8;">
+            Data Integrity Score: <strong style="color:white">${Math.round(elig.integrity_score * 100)}/100</strong>
+        </div>
+      `;
+    result.appendChild(eBox);
+  }
+
 
   // 3. Advanced Metrics Grid
   const metricsGrid = document.createElement('div');
