@@ -144,6 +144,117 @@ function renderHistory() {
   });
 }
 
+// --- Navigation Logic ---
+const navBtns = document.querySelectorAll('.nav-btn');
+const pages = document.querySelectorAll('.page-section');
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Switch tabs
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Switch pages
+    const targetId = btn.getAttribute('data-target');
+    pages.forEach(p => {
+      if (p.id === targetId) {
+        p.style.display = 'block';
+        if (targetId === 'activity-page') loadActivityPage();
+      } else {
+        p.style.display = 'none';
+      }
+    });
+  });
+});
+
+// --- Activity Dashboard Logic ---
+let activityChart = null;
+
+function loadActivityPage() {
+  const history = JSON.parse(localStorage.getItem('scanHistory') || '[]');
+
+  // 1. Update Stats
+  document.getElementById('totalScans').innerText = history.length;
+  if (history.length > 0) {
+    const avg = history.reduce((sum, h) => sum + (h.finalScore || 0), 0) / history.length;
+    document.getElementById('avgAiScore').innerText = Math.round(avg * 100) + '%';
+  } else {
+    document.getElementById('avgAiScore').innerText = '0%';
+  }
+
+  // 2. Render Full List
+  const list = document.getElementById('fullHistory');
+  list.innerHTML = '';
+  if (history.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;">No activity yet. Scan a document!</div>';
+  } else {
+    history.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'hist-row';
+      const scoreColor = (item.finalScore || 0) > 0.5 ? '#fca5a5' : '#6ee7b7';
+      row.innerHTML = `
+        <div class="hist-info">
+           <div class="hist-file">${item.filename}</div>
+           <div class="hist-date">${item.date}</div>
+        </div>
+        <div class="hist-score" style="color:${scoreColor}">${Math.round((item.finalScore || 0) * 100)}% Risk</div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  // 3. Render Chart
+  const ctx = document.getElementById('activityChart').getContext('2d');
+  if (activityChart) activityChart.destroy();
+
+  // Prepare data (last 10 scans reversed)
+  const recentHist = history.slice(0, 10).reverse();
+  const labels = recentHist.map((h, i) => `Scan ${i + 1}`);
+  const dataPoints = recentHist.map(h => (h.finalScore || 0) * 100);
+
+  activityChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'AI Probability (%)',
+        data: dataPoints,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#60a5fa'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+          titleColor: '#e2e8f0',
+          bodyColor: '#e2e8f0',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { display: false } // hide x labels for cleaner look
+        }
+      }
+    }
+  });
+}
+
 // --- 3D Effects ---
 // Dynamically load Vanilla-Tilt for the 3D effect
 (function loadTilt() {
