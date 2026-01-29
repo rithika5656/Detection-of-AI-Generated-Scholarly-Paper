@@ -1,33 +1,34 @@
 {
-  "file": "C:\\Users\\rithi\\OneDrive\\Desktop\\Scholarly paper\\data\\uploads\\Student_Dataset_50.xlsx",
+  "file": "data/uploads/debug_test.xlsx",
   "metadata": {
-    "title": "Student_Dataset_50.xlsx"
+    "title": "debug_test.xlsx"
   },
   "sections": {
     "abstract": "",
-    "body": "STU001 Priya S Female 496 786 MBC EEE ABC Engineering College Madurai 9482860301 priyas@gmail.com 86259 Yes STU002 Harini M Female 473 1091 OC EEE ABC Engineering College Coimbatore 9572071165 harinim@gmail.com 250789 No STU003 Nithya S Male 496 816 OC MECH ABC Engineering College Erode 9109112908 nithyas@gmail.com 260211 No STU004 Rohit R Female 493 720 OC ECE National Engineering College Chennai 9854168800 rohitr@gmail.com 192794 Yes STU005 Aishwarya K Female 396 846 SC MECH XYZ Institute of Technology Trichy 9544039977 aishwaryak@gmail.com 261791 No STU006 Manoj M Male 462 1170 ST CIVIL National Engineering College Coimbatore 9142838948 manojm@gmail.com 190321 Yes STU007 Manoj S Female 450 803 ST MECH ABC Engineering College Erode 9469992764 manojs@gmail.com 271643 No STU008 Vignesh R Female 431 773 SC EEE XYZ Institute of Technology Salem 9794741198 vigneshr@gmail.com 110724 Yes STU009 Harini K Male 417 880 BC ECE ABC Engineering College Coimbatore 9714453615 harinik@gmail.com 112005 Yes STU010 Aishwarya K Male 477 923 SC MECH ABC Engineering College Trichy 9821374344 aishwaryak@gmail.com 179195 Yes STU011 Rohit M Female 409 726 SC ECE National Engineering College Trichy 9244383114 rohitm@gmail.com 69689 Yes STU012 Pavithra R Female 476 710 OC CIVIL ABC Engineering College Madurai 9536362720 pavithrar@gmail.com 134012 Yes STU013 Sowmiya S Male 370 1174 MBC CIVIL National Engineering College Erode 9636381343 sowmiyas@gmail.com 91152 Yes STU014 Rithika S Male 491 939 BC EEE XYZ Institute of Technology Trichy 9843214768 rithikas@gmail.com 268800 No STU015 Nithya S Female 370 1121 ST MECH ABC Engineering College Erode 9167303149 nithyas@gmail.com 204926 No STU016 Divya R Male 368 880 MBC CSE National Engineering College Madurai 9897189356 divyar@gmail.com 133131 Yes STU017 Sowmiya R Male 486 938 BC AIML National Engineering College Trichy 9973292838 sowmiyar@gmail.com 127821 Yes STU018 Vignesh R Male 401 1145 ST MECH ABC Engineering College Madurai 9302824469 vigneshr@gmail.com 152295 Yes STU019 Rohit M Male 367 904 SC MECH ABC Engineering College Trichy 9299089907 rohitm@gmail.com 160754 Yes STU020 Santhosh R Female 419 875 MBC CSE XYZ Institute of Technology Trichy 9382404674 santhoshr@gmail.com 109043 Yes STU021 Vignesh K Female 393 1121 BC AIML XYZ Institute of Technology Erode 9661667073 vigneshk@gmail.com 130034 Yes STU022 Keerthana R Female 429 1009 BC ECE National Engineering College Coimbatore 9418811720 keerthanar@gmail.com 203694 No STU023 Sowmiya K Female 477 1021 MBC ECE National Engineering College Salem 9659516543 sowmiyak@gmail.com 223204 No STU024 Keerthana M Male 498 903 MBC MECH National Engineering College Coimbatore 9330128490 keerthanam@gmail.com 133688 Yes STU025 Ajay S Male 419 1060 OC CSE ABC Engineering College Erode 9626412742 ajays@gmail.com 65177 Yes STU026 Vignesh S Female 407 1082 ST MECH ABC Engineering College Madurai 9542226162 vigneshs@gmail.com 92017 Yes STU027 Arun M Male 437 796 BC ECE National Engineering College Coimbatore 9387051881 arunm@gmail.com 124391 Yes STU028 Pavithra K Female 353 851 BC ECE XYZ Institute of Technology Salem 9322225604 pavithrak@gmail.com 209711 No STU029 Ajay S Female 476 946 ST EEE ABC Engineering College Erode 9762896408 ajays@gmail.com 231445 No STU030 Vignesh K Male 414 751 ST ECE XYZ Institute of Technology Erode 9671734624 vigneshk@gmail.com 247762 No STU031 Rithika R Female 485 883 ST CSE National Engineering College Madurai 9833416571 rithikar@gmail.com 204417 No STU032 Divya R Female 457 852 OC EEE XYZ Institute of Technology Salem 9508652577 divyar@gmail.com 274437 No STU033 Santhosh R Male 468 752 OC AIML National Engineering College Salem 9657894363 santhoshr@gmail.com 71276 Yes STU034 Priya R Female 385 1060 OC CIVIL National Engineering College Trichy 9910796259 priyar@gmail.com 75868 Yes STU035 Rithika S Male 420 798 SC MECH ABC Engineering College Salem 9759724910 rithikas@gmail.com 99060 Yes STU036 Rohit R Female 383 934 SC MECH ABC Engineering College Trichy 9645310660 rohitr@gmail.com 232103 No STU037 Divya S Female 396 843 OC ECE National Engineering College Salem 9506516231 divyas@gmail.com 91595 Yes STU038 Arun R Female 456 892 MBC CIVIL National Engineering College Trichy 9477611817 arunr@gmail.com 281860 No STU039 Manoj S Male 494 944 BC EEE National Engineering College Madurai 9441866155 manojs@gmail.com 97119 Yes STU040 Ajay M Female 423 737 ST CIVIL National Engineering College Salem 9453782953 ajaym@gmail.com 255198 No STU041 Vignesh R Female 395 951 SC CSE National Engineering College Coimbatore 9739805799 vigneshr@gmail.com 136696 Yes STU042 Vignesh S Female 409 1175 SC MECH National Engineering College Chennai 9419740492 vigneshs@gmail.com 168022 Yes STU043 Pavithra M Female 485 914 SC AIML National Engineering College Trichy 9368723101 pavithram@gmail.com 277421 No STU044 Divya S Female 484 976 SC AIML National Engineering College Trichy 9607262252 divyas@gmail.com 257739 No STU045 Rithika K Female 449 1171 OC CSE ABC Engineering College Coimbatore 9838651932 rithikak@gmail.com 111495 Yes STU046 Karthik M Male 399 941 SC AIML ABC Engineering College Coimbatore 9602674319 karthikm@gmail.com 154888 Yes STU047 Manoj R Female 478 955 ST ECE XYZ Institute of Technology Trichy 9470436400 manojr@gmail.com 278672 No STU048 Divya S Female 448 800 SC ECE National Engineering College Madurai 9380806261 divyas@gmail.com 143692 Yes STU049 Vignesh K Female 360 1050 SC AIML XYZ Institute of Technology Madurai 9127800657 vigneshk@gmail.com 227575 No STU050 Ajay K Male 466 1111 SC CSE National Engineering College Madurai 9289832991 ajayk@gmail.com 184773 Yes",
+    "body": "This is a test sentence. Another sentence with AI content likely.",
     "references": ""
   },
   "scores": {
     "ai_score": {
-      "score": 0.339,
+      "score": 0.42,
       "metrics": {
-        "perplexity": 76,
-        "burstiness": 39,
-        "avg_sentence_len": 16.9
+        "perplexity": 68,
+        "burstiness": 100,
+        "avg_sentence_len": 5.5,
+        "method": "Random Forest"
       }
     },
     "plagiarism_score": 0.0,
     "citation_score": {
-      "score": 0.2,
+      "score": 1.0,
       "count": 0,
       "details": "Found 0 citations (Numeric: 0, Auth-Date: 0)"
     },
     "final": {
-      "final_probability": 0.203,
+      "final_probability": 0.252,
       "decision": "Accept"
     }
   },
   "matches": [],
-  "summary": "AI score {'score': 0.339, 'metrics': {'perplexity': 76, 'burstiness': 39, 'avg_sentence_len': 16.9}}, Plagiarism 0.0, Citations 0.2, Decision: Accept"
+  "summary": "AI score {'score': 0.42, 'metrics': {'perplexity': 68, 'burstiness': 100, 'avg_sentence_len': 5.5, 'method': 'Random Forest'}}, Plagiarism 0.0, Citations 1.0, Decision: Accept"
 }
