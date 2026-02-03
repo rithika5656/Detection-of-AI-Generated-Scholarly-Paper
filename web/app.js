@@ -481,3 +481,267 @@ fileInput.addEventListener('change', () => {
 
 // Init
 renderHistory();
+
+// ==================== CHATBOT FUNCTIONALITY ====================
+
+const chatbotToggle = document.getElementById('chatbotToggle');
+const chatbotContainer = document.getElementById('chatbotContainer');
+const chatbotClose = document.getElementById('chatbotClose');
+const chatbotMessages = document.getElementById('chatbotMessages');
+const chatbotInput = document.getElementById('chatbotInput');
+const chatbotSend = document.getElementById('chatbotSend');
+const chatSuggestions = document.getElementById('chatSuggestions');
+const chatNotification = document.getElementById('chatNotification');
+
+// Store analysis context for chatbot
+let chatAnalysisContext = null;
+
+// Format markdown-like text to HTML
+function formatChatMessage(text) {
+  return text
+    // Bold text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Headers
+    .replace(/^### (.+)$/gm, '<h4 style="margin:8px 0 4px;font-size:13px;color:#94a3b8">$1</h4>')
+    // Bullet points
+    .replace(/^• (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul style="margin:8px 0;padding-left:16px;">$&</ul>')
+    // Line breaks
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+}
+
+// Add message to chat
+function addChatMessage(text, isBot = true) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `chat-message ${isBot ? 'bot' : 'user'}`;
+  
+  const avatar = document.createElement('div');
+  avatar.className = 'chat-message-avatar';
+  avatar.textContent = isBot ? '🤖' : '👤';
+  
+  const content = document.createElement('div');
+  content.className = 'chat-message-content';
+  content.innerHTML = isBot ? `<p>${formatChatMessage(text)}</p>` : text;
+  
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(content);
+  chatbotMessages.appendChild(msgDiv);
+  
+  // Scroll to bottom
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+  const indicator = document.createElement('div');
+  indicator.className = 'chat-message bot';
+  indicator.id = 'typingIndicator';
+  indicator.innerHTML = `
+    <div class="chat-message-avatar">🤖</div>
+    <div class="chat-message-content">
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  `;
+  chatbotMessages.appendChild(indicator);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+// Remove typing indicator
+function removeTypingIndicator() {
+  const indicator = document.getElementById('typingIndicator');
+  if (indicator) indicator.remove();
+}
+
+// Send message to chatbot API
+async function sendChatMessage(message) {
+  if (!message.trim()) return;
+  
+  // Add user message
+  addChatMessage(message, false);
+  chatbotInput.value = '';
+  chatbotSend.disabled = true;
+  
+  // Show typing indicator
+  showTypingIndicator();
+  
+  try {
+    const response = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: message,
+        analysis_context: chatAnalysisContext
+      })
+    });
+    
+    removeTypingIndicator();
+    
+    if (response.ok) {
+      const data = await response.json();
+      addChatMessage(data.message, true);
+    } else {
+      addChatMessage("I'm having trouble connecting. Please try again.", true);
+    }
+  } catch (error) {
+    removeTypingIndicator();
+    addChatMessage("Connection error. Please check your network.", true);
+  } finally {
+    chatbotSend.disabled = false;
+    chatbotInput.focus();
+  }
+}
+
+// Initialize chatbot with greeting
+async function initChatbot() {
+  try {
+    const response = await fetch('/chat/greeting');
+    if (response.ok) {
+      const data = await response.json();
+      addChatMessage(data.message, true);
+    } else {
+      addChatMessage("Hello! I'm your Detection Assistant. Upload a paper to analyze, then ask me about the results!", true);
+    }
+  } catch (error) {
+    addChatMessage("Hello! I'm your Detection Assistant. Upload a paper to analyze, then ask me about the results!", true);
+  }
+}
+
+// Update chatbot context when analysis completes
+function updateChatbotContext(analysisData) {
+  chatAnalysisContext = analysisData;
+  
+  // Show notification dot
+  if (!chatbotContainer.classList.contains('open')) {
+    chatNotification.style.display = 'block';
+  }
+  
+  // Add automatic explanation if available
+  if (analysisData.chatbot_explanation) {
+    // If chat is open, add the message
+    if (chatbotContainer.classList.contains('open')) {
+      addChatMessage(analysisData.chatbot_explanation, true);
+    }
+  }
+}
+
+// Toggle chatbot visibility
+chatbotToggle.addEventListener('click', () => {
+  chatbotContainer.classList.toggle('open');
+  chatNotification.style.display = 'none';
+  
+  // Initialize if first open
+  if (chatbotContainer.classList.contains('open') && chatbotMessages.children.length === 0) {
+    initChatbot();
+  }
+  
+  // Focus input when opened
+  if (chatbotContainer.classList.contains('open')) {
+    chatbotInput.focus();
+  }
+});
+
+// Close chatbot
+chatbotClose.addEventListener('click', () => {
+  chatbotContainer.classList.remove('open');
+});
+
+// Send message on button click
+chatbotSend.addEventListener('click', () => {
+  sendChatMessage(chatbotInput.value);
+});
+
+// Send message on Enter key
+chatbotInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage(chatbotInput.value);
+  }
+});
+
+// Handle suggestion chips
+chatSuggestions.addEventListener('click', (e) => {
+  if (e.target.classList.contains('suggestion-chip')) {
+    const message = e.target.getAttribute('data-message');
+    if (message) {
+      sendChatMessage(message);
+    }
+  }
+});
+
+// Override the existing showResult to include GenAI features and update chatbot
+const originalShowResult = showResult;
+showResult = function(data) {
+  originalShowResult(data);
+  
+  // Update chatbot context
+  updateChatbotContext(data);
+  
+  // Add GenAI features display if available
+  const genaiFeatures = data.scores?.genai_features || data.scores?.ai_score?.genai_features;
+  if (genaiFeatures && genaiFeatures.features) {
+    const existingGenai = document.getElementById('genaiSection');
+    if (existingGenai) existingGenai.remove();
+    
+    const genaiSection = document.createElement('div');
+    genaiSection.id = 'genaiSection';
+    genaiSection.className = 'decision-box';
+    genaiSection.style.marginTop = '20px';
+    genaiSection.style.flexDirection = 'column';
+    genaiSection.style.alignItems = 'stretch';
+    genaiSection.style.background = 'rgba(139, 92, 246, 0.1)';
+    genaiSection.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+    
+    let genaiHtml = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-size:12px;text-transform:uppercase;color:#a78bfa;letter-spacing:1px;">GenAI Pattern Analysis</span>
+        <span style="font-size:16px;font-weight:700;color:white">${Math.round(genaiFeatures.composite_score * 100)}% AI Patterns</span>
+      </div>
+      <div style="width:100%;height:1px;background:rgba(139,92,246,0.2);margin-bottom:12px;"></div>
+      <div class="genai-features-grid">
+    `;
+    
+    const featureLabels = {
+      'gpt_repetition': 'GPT Repetition',
+      'gemini_overflow': 'Gemini Overflow',
+      'claude_hedging': 'Claude Hedging',
+      'burstiness': 'Low Burstiness',
+      'citation_hallucination': 'Citation Issues',
+      'perplexity': 'Low Perplexity'
+    };
+    
+    for (const [key, feature] of Object.entries(genaiFeatures.features)) {
+      const score = feature.score || 0;
+      const level = score > 0.6 ? 'high' : score > 0.3 ? 'moderate' : 'low';
+      const levelText = score > 0.6 ? 'High' : score > 0.3 ? 'Moderate' : 'Low';
+      
+      genaiHtml += `
+        <div class="genai-feature-item">
+          <div class="genai-feature-name">${featureLabels[key] || key}</div>
+          <div class="genai-feature-score">${Math.round(score * 100)}%</div>
+          <div class="genai-feature-level ${level}">${levelText}</div>
+        </div>
+      `;
+    }
+    
+    genaiHtml += '</div>';
+    
+    // Add interpretation if available
+    if (genaiFeatures.interpretation && genaiFeatures.interpretation.length > 0) {
+      genaiHtml += `
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(139,92,246,0.2);">
+          <div style="font-size:11px;text-transform:uppercase;color:#a78bfa;letter-spacing:1px;margin-bottom:8px;">Key Findings</div>
+          <ul style="margin:0;padding-left:16px;font-size:13px;color:#cbd5e1;">
+            ${genaiFeatures.interpretation.map(i => `<li style="margin-bottom:4px;">${i}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+    
+    genaiSection.innerHTML = genaiHtml;
+    result.appendChild(genaiSection);
+  }
+};
+
