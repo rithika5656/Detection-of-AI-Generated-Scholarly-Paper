@@ -133,6 +133,56 @@
   </main>
 
   <div class="toast-container" id="toastContainer"></div>
+  
+  <!-- Chatbot UI -->
+  <button class="chatbot-toggle" id="chatbotToggle" title="Chat with AI Assistant">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C6.48 2 2 6.48 2 12C2 13.85 2.5 15.55 3.35 17L2 22L7 20.65C8.45 21.5 10.15 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="currentColor"/>
+      <circle cx="8" cy="12" r="1.5" fill="white"/>
+      <circle cx="12" cy="12" r="1.5" fill="white"/>
+      <circle cx="16" cy="12" r="1.5" fill="white"/>
+    </svg>
+    <span class="notification-dot" id="chatNotification" style="display:none"></span>
+  </button>
+
+  <div class="chatbot-container" id="chatbotContainer">
+    <div class="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-avatar">🤖</div>
+        <div class="chatbot-header-info">
+          <h3>Detection Assistant</h3>
+          <span>Online</span>
+        </div>
+      </div>
+      <button class="chatbot-close" id="chatbotClose">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="chatbot-messages" id="chatbotMessages">
+      <!-- Messages will be added dynamically -->
+    </div>
+    
+    <div class="chat-suggestions" id="chatSuggestions">
+      <button class="suggestion-chip" data-message="Explain my scores">📊 Explain scores</button>
+      <button class="suggestion-chip" data-message="What is perplexity?">🔍 Perplexity</button>
+      <button class="suggestion-chip" data-message="How does detection work?">⚙️ How it works</button>
+      <button class="suggestion-chip" data-message="Tips for better writing">✍️ Writing tips</button>
+    </div>
+    
+    <div class="chatbot-input-container">
+      <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Ask about your analysis..." />
+      <button class="chatbot-send" id="chatbotSend">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
   <footer class="footer">Built for academic integrity — prototype only.</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
