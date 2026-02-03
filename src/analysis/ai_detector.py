@@ -24,16 +24,21 @@ except Exception as e:
 def detect_ai(text):
     """
     Detects AI probability using a Random Forest model if available,
-    otherwise falls back to heuristics.
+    otherwise falls back to heuristics. Also extracts GenAI-specific features.
+    
+    Returns a comprehensive detection result including:
+    - Overall AI probability score
+    - Basic metrics (perplexity, burstiness proxies)
+    - GenAI-specific features (GPT repetition, Gemini overflow, etc.)
     """
     if not text or not text.strip():
-        return {'score': 0.0, 'metrics': {'perplexity': 0, 'burstiness': 0}}
+        return {'score': 0.0, 'metrics': {'perplexity': 0, 'burstiness': 0}, 'genai_features': {}}
         
     sentences = [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
     words = text.split()
     
     if not sentences or not words:
-        return {'score': 0.0, 'metrics': {'perplexity': 0, 'burstiness': 0}}
+        return {'score': 0.0, 'metrics': {'perplexity': 0, 'burstiness': 0}, 'genai_features': {}}
 
     # Default Heuristic Calculation (Fallback & Metrics)
     avg_len = sum(len(s.split()) for s in sentences) / max(1, len(sentences))
@@ -57,17 +62,28 @@ def detect_ai(text):
         heuristic_raw = (avg_len / 30.0) * (1.0 - unique_ratio)
         score = max(0.0, min(1.0, heuristic_raw))
     
-    # 2. Calculate Display Metrics (Perplexity/Burstiness proxy)
+    # 2. Extract GenAI-specific features
+    genai_features = extract_genai_features(text)
+    
+    # 3. Combine ML score with GenAI composite score for enhanced detection
+    genai_composite = genai_features.get('composite_score', 0)
+    # Weighted combination: 60% ML model, 40% GenAI features
+    enhanced_score = (score * 0.6) + (genai_composite * 0.4)
+    
+    # 4. Calculate Display Metrics (Perplexity/Burstiness proxy)
     # These are illustrative metrics for the UI since TF-IDF RF doesn't output them directly
-    perplexity = int((1.0 - score) * 100) + 10 
+    perplexity = int((1.0 - enhanced_score) * 100) + 10 
     burstiness = int(unique_ratio * 100)
     
     return {
-        'score': round(score, 3),
+        'score': round(enhanced_score, 3),
+        'ml_score': round(score, 3),
+        'genai_composite': round(genai_composite, 3),
         'metrics': {
             'perplexity': perplexity,
             'burstiness': burstiness,
             'avg_sentence_len': round(avg_len, 1),
-            'method': 'Random Forest' if MODEL else 'Heuristic'
-        }
+            'method': 'Random Forest + GenAI Features' if MODEL else 'Heuristic + GenAI Features'
+        },
+        'genai_features': genai_features
     }
