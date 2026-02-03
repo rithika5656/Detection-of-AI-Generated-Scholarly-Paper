@@ -145,6 +145,77 @@ def submit_feedback(feedback: FeedbackRequest):
     return {"status": "received", "message": "Thank you for your feedback! This helps us improve."}
 
 
+# ==================== CHATBOT ENDPOINTS ====================
+
+@app.post('/chat', response_model=ChatResponse)
+def chatbot_endpoint(request: ChatRequest):
+    """
+    Chatbot endpoint for explaining detection results.
+    
+    The chatbot can:
+    - Explain detection scores and features
+    - Answer questions about methodology
+    - Provide writing improvement tips
+    - Educate about AI-generated content detection
+    
+    ETHICAL NOTE: The chatbot will NOT help generate academic content
+    or assist in bypassing detection systems.
+    """
+    try:
+        response = chat(request.message, request.analysis_context)
+        return ChatResponse(
+            message=response.get('message', 'I could not process your request.'),
+            type=response.get('type', 'unknown'),
+            intent=response.get('intent', 'unknown')
+        )
+    except Exception as e:
+        print(f"Chatbot error: {e}")
+        return ChatResponse(
+            message="I'm having trouble processing your request. Please try again.",
+            type="error",
+            intent="error"
+        )
+
+
+@app.get('/chat/greeting')
+def chatbot_greeting():
+    """
+    Get the initial chatbot greeting message.
+    """
+    response = chat("hello")
+    return {
+        "message": response.get('message', 'Hello! How can I help you understand your analysis results?'),
+        "suggestions": [
+            "Explain my scores",
+            "What is perplexity?",
+            "How does detection work?",
+            "Tips for better writing"
+        ]
+    }
+
+
+@app.post('/chat/explain')
+def chatbot_explain_analysis(analysis_result: dict):
+    """
+    Generate an automatic explanation for an analysis result.
+    
+    This endpoint is useful for generating explanations
+    immediately after analysis is complete.
+    """
+    try:
+        explanation = generate_explanation(analysis_result)
+        return {
+            "explanation": explanation,
+            "status": "success"
+        }
+    except Exception as e:
+        print(f"Explanation generation error: {e}")
+        return {
+            "explanation": "Analysis complete. Feel free to ask questions about your results!",
+            "status": "fallback"
+        }
+
+
 @app.get('/health')
 def health():
     return {'status':'ok'}
