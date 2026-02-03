@@ -3,6 +3,9 @@ import re
 import joblib
 import numpy as np
 
+# Import GenAI feature extractor for enhanced detection
+from .genai_features import extract_genai_features
+
 # Path to the trained model
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODEL_PATH = os.path.join(BASE_DIR, 'data', 'models', 'ai_detector_rf.joblib')
