@@ -5,6 +5,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
 
 # make src importable when running from project root
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -15,12 +16,18 @@ from analysis.ai_detector import detect_ai
 from analysis.plagiarism import check_plagiarism
 from analysis.citation import check_citations
 from analysis.eligibility import check_eligibility  # New Import
+from analysis.genai_features import extract_genai_features  # GenAI Feature Extraction
 from scoring.score import aggregate_scores
 from report.generate import generate_report
 from learning.retrain import retrain
+from chatbot.explainer import chat, generate_explanation, get_chatbot  # Chatbot Integration
 from pydantic import BaseModel
 
-app = FastAPI(title="Scholarly Paper Detector API")
+app = FastAPI(
+    title="Scholarly Paper Detector API",
+    description="AI-Generated Scholarly Paper Detection System with Chatbot Integration",
+    version="2.0.0"
+)
 
 # CORS - allow frontend access
 app.add_middleware(
@@ -35,6 +42,20 @@ class FeedbackRequest(BaseModel):
     filename: str
     is_accurate: bool
     comments: str = None
+
+
+class ChatRequest(BaseModel):
+    """Request model for chatbot interactions."""
+    message: str
+    analysis_context: Optional[dict] = None  # Optional analysis result for context
+
+
+class ChatResponse(BaseModel):
+    """Response model for chatbot interactions."""
+    message: str
+    type: str
+    intent: str
+
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB_DIR = ROOT / 'web'
@@ -94,6 +115,17 @@ async def analyze(file: UploadFile = File(...)):
         # Add eligibility to the report structure
         report = generate_report(str(save_path), metadata, sections, ai_result, plagiarism_score, citation_result, final, matches)
         report['eligibility'] = eligibility_result # Append explicitly since generate_report might not expect it
+        
+        # Add GenAI features to report for frontend display
+        if isinstance(ai_result, dict) and 'genai_features' in ai_result:
+            report['scores']['genai_features'] = ai_result['genai_features']
+        
+        # Generate automatic chatbot explanation
+        try:
+            report['chatbot_explanation'] = generate_explanation(report)
+        except Exception as chat_err:
+            print(f"Chatbot explanation error: {chat_err}")
+            report['chatbot_explanation'] = "Analysis complete. Ask me about your results!"
         
         return report
     except Exception as e:
