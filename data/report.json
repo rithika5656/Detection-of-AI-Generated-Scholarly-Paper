@@ -1,5 +1,5 @@
 {
-  "file": "C:\\Users\\rithi\\Desktop\\Detection-of-AI-Generated-Scholarly-Paper\\Detection-of-AI-Generated-Scholarly-Paper\\data\\uploads\\Employee datset.txt",
+  "file": "data\\uploads\\Employee datset.txt",
   "metadata": {
     "title": "Employee datset.txt"
   },
@@ -86,7 +86,7 @@
       "details": "Found 0 citations (Numeric: 0, Auth-Date: 0)"
     },
     "final": {
-      "final_probability": 0.137,
+      "final_probability": 0.114,
       "decision": "Accept"
     }
   },
