@@ -13,8 +13,12 @@ from analysis.plagiarism import check_plagiarism
 from analysis.citation import check_citations
 from scoring.score import aggregate_scores
 from report.generate import generate_report
+from chatbot.explainer import ExplainerChatbot
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Initialize chatbot
+chatbot = ExplainerChatbot()
 WEB_DIR = os.path.join(BASE_DIR, 'web')
 app = Flask(__name__, static_folder=WEB_DIR, static_url_path='/static', template_folder=WEB_DIR)
 UPLOAD_DIR = os.path.join('data', 'uploads')
@@ -42,6 +46,28 @@ def analyze():
     report = generate_report(save_path, metadata, sections, ai_score, plagiarism_score, citation_score, final, matches)
 
     return jsonify(report)
+
+@app.route('/chat/greeting', methods=['GET'])
+def chat_greeting():
+    """Return initial chatbot greeting."""
+    return jsonify({
+        'message': "Hello! I'm your Detection Assistant. Upload a paper to analyze, then ask me about the results!"
+    })
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    """Handle chat messages."""
+    data = request.get_json()
+    if not data or 'message' not in data:
+        return jsonify({'error': 'No message provided'}), 400
+    
+    user_message = data.get('message', '')
+    analysis_context = data.get('analysis_context', None)
+    
+    # Get response from chatbot
+    response = chatbot.get_response(user_message, analysis_context)
+    
+    return jsonify({'message': response.get('message', '')})
 
 if __name__ == '__main__':
     app.run(debug=True)
