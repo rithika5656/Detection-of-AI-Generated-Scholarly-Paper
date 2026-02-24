@@ -72,8 +72,9 @@ def detect_ai(text):
     
     # 4. Calculate Display Metrics (Perplexity/Burstiness proxy)
     # These are illustrative metrics for the UI since TF-IDF RF doesn't output them directly
-    perplexity = int((1.0 - enhanced_score) * 100) + 10 
-    burstiness = int(unique_ratio * 100)
+    # Perplexity as percentage: lower = more predictable (AI-like), higher = more varied (human-like)
+    perplexity = round((1.0 - enhanced_score) * 100, 1)  # 0-100% scale
+    burstiness = round(unique_ratio * 100, 1)
     
     return {
         'score': round(enhanced_score, 3),

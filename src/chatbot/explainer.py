@@ -397,8 +397,10 @@ class ExplainerChatbot:
         if isinstance(ai_score, dict) and 'metrics' in ai_score:
             metrics = ai_score['metrics']
             message += f"**Key Metrics:**\n"
-            message += f"• Perplexity: {metrics.get('perplexity', 'N/A')}\n"
-            message += f"• Burstiness: {metrics.get('burstiness', 'N/A')}\n"
+            perplexity_val = metrics.get('perplexity', 'N/A')
+            burstiness_val = metrics.get('burstiness', 'N/A')
+            message += f"• Perplexity: {perplexity_val}%\n" if perplexity_val != 'N/A' else f"• Perplexity: N/A\n"
+            message += f"• Burstiness: {burstiness_val}%\n" if burstiness_val != 'N/A' else f"• Burstiness: N/A\n"
             message += f"• Method: {metrics.get('method', 'Unknown')}\n\n"
         
         if genai and 'features' in genai:

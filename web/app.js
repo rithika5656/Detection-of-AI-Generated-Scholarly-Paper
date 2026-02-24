@@ -114,11 +114,11 @@ function showResult(data) {
   metricsGrid.innerHTML = `
     <div class="metric-item">
       <div class="metric-name">Perplexity</div>
-      <div class="metric-val">${aiMetrics.perplexity || 'N/A'}</div>
+      <div class="metric-val">${aiMetrics.perplexity !== undefined ? aiMetrics.perplexity + '%' : 'N/A'}</div>
     </div>
     <div class="metric-item">
       <div class="metric-name">Burstiness</div>
-      <div class="metric-val">${aiMetrics.burstiness || 'N/A'}</div>
+      <div class="metric-val">${aiMetrics.burstiness !== undefined ? aiMetrics.burstiness + '%' : 'N/A'}</div>
     </div>
     <div class="metric-item">
       <div class="metric-name">Citation Count</div>
@@ -375,8 +375,8 @@ Plagiarism Score: ${fmtPct(data.scores.plagiarism_score)}
 
 METRICS
 -------
-Perplexity: ${(data.scores.ai_score.metrics || {}).perplexity || 'N/A'}
-Burstiness: ${(data.scores.ai_score.metrics || {}).burstiness || 'N/A'}
+Perplexity: ${(data.scores.ai_score.metrics || {}).perplexity !== undefined ? (data.scores.ai_score.metrics || {}).perplexity + '%' : 'N/A'}
+Burstiness: ${(data.scores.ai_score.metrics || {}).burstiness !== undefined ? (data.scores.ai_score.metrics || {}).burstiness + '%' : 'N/A'}
 Avg Sentence Length: ${(data.scores.ai_score.metrics || {}).avg_sentence_len || 'N/A'}
 
 SUSPICIOUS SEGMENTS
